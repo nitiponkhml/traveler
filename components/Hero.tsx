@@ -26,7 +26,7 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl text-white mb-6 animate-fade-in font-[var(--font-playfair)]">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl text-white mb-6 animate-fade-in">
           Discover the Magic of{" "}
           <span className="bg-gradient-to-r from-yellow-300 to-pink-400 bg-clip-text text-transparent">
             Thailand
