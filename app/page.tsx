@@ -9,6 +9,7 @@ import Culture from "@/components/Culture";
 import Food from "@/components/Food";
 import TravelTips from "@/components/TravelTips";
 import QuickFacts from "@/components/QuickFacts";
+import SubscriptionForm from "@/components/SubscriptionForm";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
       <Food />
       <TravelTips />
       <QuickFacts />
+      <SubscriptionForm />
       <Footer />
     </main>
   );
