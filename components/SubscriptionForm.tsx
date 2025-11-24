@@ -3,25 +3,52 @@
 import { useState, FormEvent } from 'react';
 
 export default function SubscriptionForm() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
+  const [nameFocused, setNameFocused] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError('');
+    setIsSubmitting(true);
 
-    // Simulate submission (no backend yet)
-    if (email) {
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Something went wrong. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
       setIsSubmitted(true);
       setTimeout(() => {
         setIsSubmitted(false);
+        setName('');
         setEmail('');
       }, 3000);
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 py-24 px-6">
+    <div id="subscription" className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 py-24 px-6">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Large decorative circle - top right */}
@@ -81,28 +108,29 @@ export default function SubscriptionForm() {
 
             <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden">
               {/* Input Container */}
-              <div className="flex flex-col md:flex-row items-stretch">
-                <div className="flex-1 relative">
+              <div className="flex flex-col items-stretch">
+                {/* Name Input */}
+                <div className="flex-1 relative border-b border-gray-100">
                   {/* Floating Label */}
                   <label
-                    htmlFor="email"
+                    htmlFor="name"
                     className={`absolute left-6 transition-all duration-300 pointer-events-none ${
-                      isFocused || email
+                      nameFocused || name
                         ? 'top-3 text-xs text-orange-600 font-bold'
                         : 'top-1/2 -translate-y-1/2 text-base text-gray-400'
                     }`}
                     style={{ fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '0.05em' }}
                   >
-                    YOUR EMAIL ADDRESS
+                    YOUR NAME
                   </label>
 
                   <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onFocus={() => setNameFocused(true)}
+                    onBlur={() => setNameFocused(false)}
                     required
                     className="w-full px-6 pt-9 pb-4 text-lg text-gray-900 bg-transparent border-0 outline-none"
                     style={{ fontFamily: '"Merriweather", Georgia, serif' }}
@@ -111,43 +139,95 @@ export default function SubscriptionForm() {
 
                   {/* Bottom border animation */}
                   <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-400 via-rose-400 to-amber-400 transform origin-left transition-transform duration-300 ${
-                    isFocused ? 'scale-x-100' : 'scale-x-0'
+                    nameFocused ? 'scale-x-100' : 'scale-x-0'
                   }`} />
                 </div>
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitted}
-                  className="group/btn relative md:w-auto px-8 py-6 md:py-0 bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 hover:from-orange-600 hover:via-rose-600 hover:to-amber-600 transition-all duration-300 overflow-hidden"
-                >
-                  {/* Button shine effect */}
-                  <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                {/* Email Input and Submit Button Row */}
+                <div className="flex flex-col md:flex-row items-stretch">
+                  <div className="flex-1 relative">
+                    {/* Floating Label */}
+                    <label
+                      htmlFor="email"
+                      className={`absolute left-6 transition-all duration-300 pointer-events-none ${
+                        emailFocused || email
+                          ? 'top-3 text-xs text-orange-600 font-bold'
+                          : 'top-1/2 -translate-y-1/2 text-base text-gray-400'
+                      }`}
+                      style={{ fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '0.05em' }}
+                    >
+                      YOUR EMAIL ADDRESS
+                    </label>
 
-                  <span
-                    className="relative text-white font-black text-xl tracking-wider flex items-center justify-center gap-3"
-                    style={{ fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '0.1em' }}
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onFocus={() => setEmailFocused(true)}
+                      onBlur={() => setEmailFocused(false)}
+                      required
+                      className="w-full px-6 pt-9 pb-4 text-lg text-gray-900 bg-transparent border-0 outline-none"
+                      style={{ fontFamily: '"Merriweather", Georgia, serif' }}
+                      placeholder=""
+                    />
+
+                    {/* Bottom border animation */}
+                    <div className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-400 via-rose-400 to-amber-400 transform origin-left transition-transform duration-300 ${
+                      emailFocused ? 'scale-x-100' : 'scale-x-0'
+                    }`} />
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitted || isSubmitting}
+                    className="group/btn relative md:w-auto px-8 py-6 md:py-0 bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 hover:from-orange-600 hover:via-rose-600 hover:to-amber-600 disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-300 overflow-hidden"
                   >
-                    {isSubmitted ? (
-                      <>
-                        <svg className="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                        SUBSCRIBED!
-                      </>
-                    ) : (
-                      <>
-                        JOIN NOW
-                        <svg className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                        </svg>
-                      </>
-                    )}
-                  </span>
-                </button>
+                    {/* Button shine effect */}
+                    <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+                    <span
+                      className="relative text-white font-black text-xl tracking-wider flex items-center justify-center gap-3"
+                      style={{ fontFamily: '"Bebas Neue", sans-serif', letterSpacing: '0.1em' }}
+                    >
+                      {isSubmitted ? (
+                        <>
+                          <svg className="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                          SUBSCRIBED!
+                        </>
+                      ) : isSubmitting ? (
+                        <>
+                          <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          JOINING...
+                        </>
+                      ) : (
+                        <>
+                          JOIN NOW
+                          <svg className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </>
+                      )}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-center text-red-600 text-sm font-semibold" style={{ fontFamily: '"Merriweather", Georgia, serif' }}>
+                {error}
+              </p>
+            </div>
+          )}
 
           {/* Privacy Note */}
           <p

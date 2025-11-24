@@ -1,6 +1,13 @@
 "use client";
 
 export default function Hero() {
+  const scrollToSubscription = () => {
+    const subscriptionSection = document.getElementById('subscription');
+    if (subscriptionSection) {
+      subscriptionSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section
       id="home"
@@ -35,7 +42,10 @@ export default function Hero() {
         <p className="text-xl md:text-2xl text-gray-200 mb-8 animate-slide-up">
           From pristine beaches to ancient temples, experience the Land of Smiles
         </p>
-        <button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl animate-slide-up">
+        <button
+          onClick={scrollToSubscription}
+          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl animate-slide-up"
+        >
           Start Your Journey
         </button>
       </div>
