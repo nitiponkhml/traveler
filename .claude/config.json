@@ -1,0 +1,15 @@
+{
+  "skills": {
+    "loadPaths": [
+      "./central-skills",
+      "./skills"
+    ],
+    "description": "central-skills loaded first (company-wide), then project skills"
+  },
+  "commands": {
+    "loadPaths": [
+      "./central-commands",
+      "./commands"
+    ]
+  }
+}
